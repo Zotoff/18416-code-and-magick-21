@@ -4,7 +4,11 @@ const setupElement = document.querySelector(`.setup`);
 const wizardTemplateElement = document.querySelector(`#similar-wizard-template`).content;
 const similarListElement = document.querySelector(`.setup-similar-list`);
 const setupSimilarElement = document.querySelector(`.setup-similar`);
+const setupOpenElement = document.querySelector(`.setup-open`);
+const setupOpenIcon = setupOpenElement.querySelector(`.setup-open-icon`);
+const setupCloseElement = setupElement.querySelector(`.setup-close`);
 const FRAGMENT = document.createDocumentFragment();
+const MAX_WIZARDS = 4;
 
 const generateRandomValue = (array) => {
   for (let i = 0; i < array.length; i++) {
@@ -31,6 +35,25 @@ const fillDomWithBlocks = (data) => {
     FRAGMENT.appendChild(generateWizardFromObject(data[i]));
   }
 };
+
+const onPopupEscPress = function (evt) {
+  if (evt.key === `Escape`) {
+    evt.preventDefault();
+    closePopup();
+  }
+};
+
+const openPopup = function () {
+  setupElement.classList.remove(`hidden`);
+
+  document.addEventListener(`keydown`, onPopupEscPress);
+};
+
+const closePopup = function () {
+  setupElement.classList.add(`hidden`);
+  document.removeEventListener(`keydown`, onPopupEscPress);
+};
+
 
 const wizards = [];
 
@@ -75,7 +98,7 @@ const eyesColors = [
 
 // Generate random values, generate object and push to wizard array
 
-for (let i = 0; i < 4; i++) {
+for (let i = 0; i < MAX_WIZARDS; i++) {
   const randomName = generateRandomValue(names);
   const randomLastName = generateRandomValue(lastNames);
   const randomColor = generateRandomValue(coatColors);
@@ -97,6 +120,25 @@ fillDomWithBlocks(wizards);
 similarListElement.appendChild(FRAGMENT);
 
 // Remove the hidden classes
-setupElement.classList.remove(`hidden`);
 setupSimilarElement.classList.remove(`hidden`);
 
+// Open Setup Window
+setupOpenElement.addEventListener(`click`, () => {
+  openPopup();
+});
+
+setupOpenIcon.addEventListener(`keydown`, (evt) => {
+  if (evt.key === `Enter`) {
+    openPopup();
+  }
+});
+
+setupCloseElement.addEventListener(`click`, () => {
+  closePopup();
+});
+
+setupCloseElement.addEventListener(`keydown`, function (evt) {
+  if (evt.key === `Enter`) {
+    closePopup();
+  }
+});
